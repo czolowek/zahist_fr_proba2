@@ -8,13 +8,30 @@ import requests
 
 load_dotenv()
 
-PROD_URI = os.getenv("PRODCT_URI")
-USER_URI = os.getenv("USER_URI")
+PROD_URI = "http://127.0.0.1:3000/api/products/"
+USER_URI = "http://127.0.0.1:3000/api/users/"
 
 
-def get_products(url:str = PROD_URI) -> List[Dict]:
-    return requests.get(url).json()
+def get_products(url: str = PROD_URI) -> List[Dict]:
+    """
+    Получает список всех продуктов.
+    """
+    if not url:
+        raise ValueError("PRODUCT_URI is not set in the environment variables.")
+    
+    response = requests.get(url)
+    response.raise_for_status()  # Проверка на ошибки HTTP
+    return response.json()
 
+
+def buy_product(product_id, name):
+    url = f"https://rozetka.com.ua/ua/igrovie-mishi/c4673278/producer=logitech/"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    }
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()  # Проверка на ошибки HTTP
+    return response.text  # Если это HTML-страница, используйте .text вместо .json()
 
 def get_product(product_id: str, url:str = PROD_URI) -> Dict:
     return requests.get(url + product_id).json()
